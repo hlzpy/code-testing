@@ -1,0 +1,65 @@
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+  <div
+    *ngFor="let key of formKeys(jsonData)"
+    class="form-field"
+    style="display: flex; align-items: center"
+  >
+    <label style="width: 100px; text-align: center">{{ key }}</label>
+
+    <div [ngSwitch]="getFiledType(jsonData[key])">
+      <div *ngSwitchCase="fieldType.String">
+        <input nz-input [formControlName]="key" nzSize="small" />
+      </div>
+      <div *ngSwitchCase="fieldType.Date">
+        <nz-date-picker [formControlName]="key"></nz-date-picker>
+      </div>
+      <div *ngSwitchCase="fieldType.Number">
+        <nz-input-number
+          [formControlName]="key"
+          nzSize="small"
+        ></nz-input-number>
+      </div>
+      <div *ngSwitchCase="fieldType.Boolean">
+        <nz-switch [formControlName]="key"></nz-switch>
+      </div>
+      <div *ngSwitchCase="fieldType.Object">
+        <app-dynamic-form
+          [jsonData]="jsonData[key]"
+          [formGroup]="formGroup.get(key)"
+        ></app-dynamic-form>
+      </div>
+      <div *ngSwitchCase="fieldType.SimpleArray">
+        <nz-select
+          style="width: 200px"
+          [formControlName]="key"
+          class="form-select"
+        >
+          <nz-option
+            *ngFor="let option of jsonData[key]"
+            [nzValue]="option"
+            [nzLabel]="option"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+      <div *ngSwitchCase="fieldType.ObjectArray" class="array-group">
+        <nz-tabset [nzAnimated]="false">
+          <nz-tab
+            *ngFor="let group of getFormControl(key)?.controls; let i = index"
+            [nzTitle]="'第' + (i + 1) + '项'"
+          >
+            <div [formGroup]="group" class="nested-group">
+              <app-dynamic-form
+                [jsonData]="jsonData[key][i]"
+                [formGroup]="group"
+              ></app-dynamic-form>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+      <div *ngSwitchDefault>
+        <input nz-input [formControlName]="key" nzSize="small" />
+      </div>
+    </div>
+  </div>
+</form>
