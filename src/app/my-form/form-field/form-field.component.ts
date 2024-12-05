@@ -32,6 +32,12 @@ export class FormFieldComponent {
   ngOnChanges(): void {
     if (this.jsonData) {
       this.buildForm(this.jsonData);
+      // add expand field
+      Object.keys(this.jsonData).forEach(key => {
+        if (this.getFiledType(this.jsonData[key]) === FieldType.Object) {
+          this.jsonData[key].expand = true;
+        }
+      })
     }
   }
 
@@ -43,6 +49,9 @@ export class FormFieldComponent {
       this.formGroup = this.fb.group({});
     }
     Object.keys(data).forEach((key) => {
+      if (key === 'expand') {
+        return;
+      }
       const value = data[key];
       switch (this.getFiledType(value)) {
         case FieldType.ObjectArray:
@@ -101,7 +110,7 @@ export class FormFieldComponent {
    * gets all keys for the form
    */
   formKeys(data: Record<string, any>): string[] {
-    return Object.keys(data);
+    return Object.keys(data).filter(key => key !== 'expand');
   }
 
   /**
@@ -111,6 +120,10 @@ export class FormFieldComponent {
     const group = this.fb.group({});
     this.buildFormGroup(group, data);
     return group;
+  }
+
+  onExpandChange(jsonData: Record<string, any>) {
+    jsonData['expand'] = !jsonData['expand'];
   }
 
   isISO8601(str: string): boolean {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Form, FormBuilder, FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -7,11 +7,16 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   templateUrl: './dynamic-form.component.html',
   styleUrl: './dynamic-form.component.scss',
 })
-export class DynamicFormComponent {
-  @Input() jsonData: Record<string, any> = {}; // 输入的 JSON 数据
-  formGroup = this.fb.group({}); // 动态生成的主表单组
+export class DynamicFormComponent implements OnChanges {
+  @Input() jsonData: Record<string, any> = {};
+  formGroup = this.fb.group({});
 
   constructor(private fb: FormBuilder, private msgSvc: NzMessageService) {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['jsonData'] && changes['jsonData'].currentValue) {
+      this.formGroup = this.fb.group({});
+    }
+  }
 
   onSubmit() {
     const formValue = this.formGroup.getRawValue();

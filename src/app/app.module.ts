@@ -20,6 +20,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { NzMessageModule } from 'ng-zorro-antd/message';
     NzButtonModule,
     NzIconModule,
     NzMessageModule,
+    NzToolTipModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US },

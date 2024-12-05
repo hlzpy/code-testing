@@ -1,10 +1,21 @@
 <form [formGroup]="formGroup">
   <div
-    *ngFor="let key of formKeys(jsonData) as  keys; let i = index"
+    *ngFor="let key of formKeys(jsonData) as keys; let i = index"
     class="flex items-center my-4"
-    [ngClass]="{'my-4': keys.length !== i + 1}"
+    [ngClass]="{ 'my-4': keys.length !== i + 1 }"
   >
-    <label class="w-24">{{ key }}:</label>
+    <label class="w-24">
+      <span>{{ key }}:</span>
+      <span
+        nz-tooltip
+        [nzTooltipTitle]="jsonData[key]['expand'] ? 'Collapse' : 'Expand'"
+        *ngIf="getFiledType(jsonData[key]) === fieldType.Object"
+        class="cursor-pointer"
+        (click)="onExpandChange(jsonData[key])"
+      >
+        {{ jsonData[key]['expand'] ? '-' : '+' }}</span
+      >
+    </label>
 
     <div [ngSwitch]="getFiledType(jsonData[key])">
       <ng-container *ngSwitchCase="fieldType.String">
@@ -24,10 +35,17 @@
         <nz-switch [formControlName]="key"></nz-switch>
       </ng-container>
       <ng-container *ngSwitchCase="fieldType.Object">
-        <app-form-field
-          [jsonData]="jsonData[key]"
-          [formGroup]="formGroup.get(key)"
-        ></app-form-field>
+        <div
+          [ngClass]="{
+            'animate-fadeIn block': jsonData[key]['expand'],
+            'animate-fadeOut hidden': !jsonData[key]['expand']
+          }"
+        >
+          <app-form-field
+            [jsonData]="jsonData[key]"
+            [formGroup]="formGroup.get(key)"
+          ></app-form-field>
+        </div>
       </ng-container>
       <ng-container *ngSwitchCase="fieldType.SimpleArray">
         <nz-select [formControlName]="key" class="w-48">
