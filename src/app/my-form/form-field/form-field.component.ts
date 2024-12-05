@@ -51,7 +51,7 @@ export class FormFieldComponent {
   /**
    * building dynamic form
    */
-  buildForm(data: DataItem): void {
+  buildForm(data: DataItem, group?: FormGroup): void {
     if (!this.formGroup) {
       this.formGroup = this.fb.group({});
     }
@@ -75,7 +75,7 @@ export class FormFieldComponent {
           break;
         case FieldType.Object:
           const nestedGroup = this.fb.group({});
-          this.buildFormGroup(nestedGroup, value);
+          this.buildForm(value, nestedGroup);
           this.formGroup.addControl(key, nestedGroup);
           break;
         default:
@@ -84,48 +84,13 @@ export class FormFieldComponent {
     });
   }
 
-  /**
-   * build a nested object form
-   */
-  buildFormGroup(group: FormGroup, data: DataItem): void {
-    Object.keys(data).forEach((key) => {
-      const value = data[key];
-      switch (this.getFiledType(value)) {
-        case FieldType.ObjectArray:
-          const formArray = this.fb.array(
-            value.map((item: DataItem[]) =>
-              this.createGroupForObject(item)
-            )
-          );
-          group.addControl(key, formArray);
-          break;
-        case FieldType.SimpleArray:
-          group.addControl(key, this.fb.control(value[0] ?? null));
-          break;
-        case FieldType.Object:
-          const nestedGroup = this.fb.group({});
-          this.buildFormGroup(nestedGroup, value);
-          group.addControl(key, nestedGroup);
-          break;
-        default:
-          group.addControl(key, this.fb.control(value));
-      }
-    });
-  }
-
-  /**
-   * gets all keys for the form
-   */
-  formKeys(data: DataItem): string[] {
-    return Object.keys(data).filter((key) => key !== 'expand');
-  }
 
   /**
    * creates a form group in an object array
    */
   createGroupForObject(data: DataItem): FormGroup {
     const group = this.fb.group({});
-    this.buildFormGroup(group, data);
+    this.buildForm(data, group);
     return group;
   }
 
