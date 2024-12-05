@@ -27,17 +27,22 @@ export class FormFieldComponent {
   @Input() formGroup!: FormGroup | any;
   fieldType = FieldType;
 
+  currentAllFields: string[] = [];
+
   constructor(private fb: FormBuilder) {}
 
   ngOnChanges(): void {
     if (this.jsonData) {
       this.buildForm(this.jsonData);
+      this.currentAllFields = Object.keys(this.jsonData)?.filter(
+        (item) => item !== 'expand'
+      );
       // add expand field
-      Object.keys(this.jsonData).forEach(key => {
+      Object.keys(this.jsonData).forEach((key) => {
         if (this.getFiledType(this.jsonData[key]) === FieldType.Object) {
           this.jsonData[key].expand = true;
         }
-      })
+      });
     }
   }
 
@@ -110,7 +115,7 @@ export class FormFieldComponent {
    * gets all keys for the form
    */
   formKeys(data: Record<string, any>): string[] {
-    return Object.keys(data).filter(key => key !== 'expand');
+    return Object.keys(data).filter((key) => key !== 'expand');
   }
 
   /**

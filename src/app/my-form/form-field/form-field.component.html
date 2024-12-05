@@ -1,8 +1,8 @@
 <form [formGroup]="formGroup">
   <div
-    *ngFor="let key of formKeys(jsonData) as keys; let i = index"
+    *ngFor="let key of currentAllFields; let i = index"
     class="flex items-center my-4"
-    [ngClass]="{ 'my-4': keys.length !== i + 1 }"
+    [ngClass]="{ 'my-4': currentAllFields.length !== i + 1 }"
   >
     <label class="w-24">
       <span>{{ key }}:</span>
