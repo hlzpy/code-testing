@@ -58,7 +58,7 @@
         </nz-select>
       </ng-container>
       <ng-container *ngSwitchCase="fieldType.ObjectArray">
-        <nz-tabset [nzSize]="'small'">
+        <nz-tabset [nzSize]="'small'" [nzAnimated]="false">
           <nz-tab
             *ngFor="let group of formGroup.get(key)?.controls; let i = index"
             [nzTitle]="'No.' + (i + 1)"

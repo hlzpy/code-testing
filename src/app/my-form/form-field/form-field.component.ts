@@ -55,33 +55,7 @@ export class FormFieldComponent {
     if (!this.formGroup) {
       this.formGroup = this.fb.group({});
     }
-    Object.keys(data).forEach((key) => {
-      if (key === 'expand') {
-        return;
-      }
-      const value = data[key];
-      switch (this.getFiledType(value)) {
-        case FieldType.ObjectArray:
-          const formArray = this.fb.array(
-            value.map((item: DataItem[]) =>
-              this.createGroupForObject(item)
-            )
-          );
-          this.formGroup.addControl(key, formArray);
-          break;
-        case FieldType.SimpleArray:
-          this.formGroup.addControl(key, this.fb.control(value[0] ?? null));
-
-          break;
-        case FieldType.Object:
-          const nestedGroup = this.fb.group({});
-          this.buildFormGroup(nestedGroup, value);
-          this.formGroup.addControl(key, nestedGroup);
-          break;
-        default:
-          this.formGroup.addControl(key, this.fb.control(value));
-      }
-    });
+    this.buildFormGroup(this.formGroup, data);
   }
 
   /**
