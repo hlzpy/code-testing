@@ -17,13 +17,15 @@ enum FieldType {
   Unknown = 'unknown',
 }
 
+type DataItem = Record<string, any>;
+
 @Component({
   selector: 'app-form-field',
   templateUrl: './form-field.component.html',
   styleUrl: './form-field.component.scss',
 })
 export class FormFieldComponent {
-  @Input() jsonData: Record<string, any> = {};
+  @Input() jsonData: DataItem = {};
   @Input() formGroup!: FormGroup | any;
   fieldType = FieldType;
 
@@ -49,7 +51,7 @@ export class FormFieldComponent {
   /**
    * building dynamic form
    */
-  buildForm(data: Record<string, any>): void {
+  buildForm(data: DataItem): void {
     if (!this.formGroup) {
       this.formGroup = this.fb.group({});
     }
@@ -61,7 +63,7 @@ export class FormFieldComponent {
       switch (this.getFiledType(value)) {
         case FieldType.ObjectArray:
           const formArray = this.fb.array(
-            value.map((item: Record<string, any>[]) =>
+            value.map((item: DataItem[]) =>
               this.createGroupForObject(item)
             )
           );
@@ -85,13 +87,13 @@ export class FormFieldComponent {
   /**
    * build a nested object form
    */
-  buildFormGroup(group: FormGroup, data: Record<string, any>): void {
+  buildFormGroup(group: FormGroup, data: DataItem): void {
     Object.keys(data).forEach((key) => {
       const value = data[key];
       switch (this.getFiledType(value)) {
         case FieldType.ObjectArray:
           const formArray = this.fb.array(
-            value.map((item: Record<string, any>[]) =>
+            value.map((item: DataItem[]) =>
               this.createGroupForObject(item)
             )
           );
@@ -114,20 +116,20 @@ export class FormFieldComponent {
   /**
    * gets all keys for the form
    */
-  formKeys(data: Record<string, any>): string[] {
+  formKeys(data: DataItem): string[] {
     return Object.keys(data).filter((key) => key !== 'expand');
   }
 
   /**
    * creates a form group in an object array
    */
-  createGroupForObject(data: Record<string, any>): FormGroup {
+  createGroupForObject(data: DataItem): FormGroup {
     const group = this.fb.group({});
     this.buildFormGroup(group, data);
     return group;
   }
 
-  onExpandChange(jsonData: Record<string, any>) {
+  onExpandChange(jsonData: DataItem) {
     jsonData['expand'] = !jsonData['expand'];
   }
 
